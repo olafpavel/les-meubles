@@ -41,6 +41,30 @@ jobs:
           EXPO_PUBLIC_SUPABASE_URL: ${{ secrets.EXPO_PUBLIC_SUPABASE_URL }}
           EXPO_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.EXPO_PUBLIC_SUPABASE_ANON_KEY }}
 
+      - name: Injecter error handler dans index.html
+        working-directory: app-mobile
+        run: |
+          python3 - <<'PY'
+          import re
+          with open("dist/index.html", "r") as f:
+              html = f.read()
+          handler = """<script>
+          window.__errors=[];
+          window.onerror=function(m,s,l,c,e){
+            window.__errors.push(m+(e?'\\n'+e.stack:''));
+            var d=document.getElementById('root');
+            if(d){d.style.cssText='padding:20px;font-family:monospace;font-size:13px;color:#c00;background:#fff;';
+            d.innerHTML='<b>Erreur de démarrage :</b><pre style="white-space:pre-wrap">'+window.__errors.join('\\n\\n')+'</pre>';}
+          };
+          window.addEventListener('unhandledrejection',function(e){
+            window.onerror('UnhandledRejection: '+e.reason,null,null,null,e.reason);
+          });
+          </script>"""
+          html = html.replace("<div id=\"root\"></div>", handler + "\n  <div id=\"root\"></div>")
+          with open("dist/index.html", "w") as f:
+              f.write(html)
+          PY
+
       - name: Déployer sur GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
         with:
