@@ -1,0 +1,1 @@
+__d(function(g,r,i,a,m,e,d){Object.defineProperty(e,"__esModule",{value:!0}),e.trace=e.propagation=e.metrics=e.default=e.context=e.SpanStatusCode=e.SpanKind=void 0;e.trace={getTracer:()=>({})},e.context={},e.propagation={},e.metrics={},e.SpanStatusCode={},e.SpanKind={};e.default={}},1689,[]);
