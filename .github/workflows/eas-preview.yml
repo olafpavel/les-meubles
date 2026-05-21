@@ -16,6 +16,15 @@ jobs:
         working-directory: app-mobile
 
     steps:
+      - name: Vérifier EXPO_TOKEN
+        run: |
+          if [ -z "${{ secrets.EXPO_TOKEN }}" ]; then
+            echo "::error::EXPO_TOKEN n'est pas configuré."
+            echo "::error::Va sur https://github.com/olafpavel/les-meubles/settings/secrets/actions"
+            echo "::error::et ajoute un secret EXPO_TOKEN avec ta clé depuis https://expo.dev/settings/access-tokens"
+            exit 1
+          fi
+
       - name: Checkout
         uses: actions/checkout@v4
 
@@ -26,41 +35,60 @@ jobs:
           cache: npm
           cache-dependency-path: app-mobile/package-lock.json
 
-      - name: Install dependencies
+      - name: Installer les dépendances
         run: npm ci --legacy-peer-deps
 
-      - name: Setup EAS
+      - name: Setup EAS CLI
         uses: expo/expo-github-action@v8
         with:
           eas-version: latest
           token: ${{ secrets.EXPO_TOKEN }}
 
-      - name: Build APK (preview)
-        run: eas build --platform android --profile preview --non-interactive
+      - name: Initialiser le projet EAS (première fois)
+        run: eas init --non-interactive --force
+        env:
+          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
 
-      - name: Get APK URL
-        id: apk
+      - name: Lancer le build APK (sans attendre)
+        id: build
         run: |
-          URL=$(eas build:list --platform android --limit 1 --json --non-interactive | python3 -c "import sys,json; d=json.load(sys.stdin); print(d[0].get('artifacts',{}).get('buildUrl',''))" 2>/dev/null || echo "")
-          echo "url=$URL" >> $GITHUB_OUTPUT
+          OUTPUT=$(eas build \
+            --platform android \
+            --profile preview \
+            --non-interactive \
+            --no-wait \
+            --json 2>/dev/null || \
+          eas build \
+            --platform android \
+            --profile preview \
+            --non-interactive \
+            --no-wait 2>&1)
+          echo "$OUTPUT"
+          BUILD_URL=$(echo "$OUTPUT" | grep -oP 'https://expo\.dev/[^\s]+' | head -1 || echo "")
+          echo "build_url=$BUILD_URL" >> $GITHUB_OUTPUT
+        env:
+          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
 
-      - name: Comment APK link on latest PR
-        if: steps.apk.outputs.url != ''
+      - name: Commenter la PR avec le lien du build
         uses: actions/github-script@v7
         with:
           script: |
-            const url = '${{ steps.apk.outputs.url }}';
+            const buildUrl = '${{ steps.build.outputs.build_url }}';
             const prs = await github.rest.pulls.list({
               owner: context.repo.owner,
               repo: context.repo.repo,
               state: 'open',
-              base: 'main'
             });
-            if (prs.data.length > 0) {
-              await github.rest.issues.createComment({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                issue_number: prs.data[0].number,
-                body: `## APK Android prêt\n\n[Télécharger l'APK](${url})\n\nInstalle-le sur ton téléphone Android (active "Sources inconnues" dans les paramètres).`
-              });
-            }
+            const pr = prs.data.find(p => p.head.ref === context.ref.replace('refs/heads/', '')) || prs.data[0];
+            if (!pr) return;
+
+            const body = buildUrl
+              ? `## 🔨 Build Android lancé\n\nSuis l'avancement et télécharge l'APK ici :\n👉 ${buildUrl}\n\nUne fois terminé, installe l'APK sur ton Android (active "Sources inconnues" si demandé).`
+              : `## 🔨 Build Android lancé sur EAS\n\nVa sur [expo.dev/builds](https://expo.dev/builds) pour suivre l'avancement et télécharger l'APK.`;
+
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: pr.number,
+              body
+            });
