@@ -1,0 +1,347 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>les meubles · wireframes</title>
+
+  <!-- Handwritten fonts for the sketchy aesthetic -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Patrick+Hand&family=Caveat:wght@500;700&family=Cutive+Mono&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="wireframe-style.css" />
+
+  <style>
+    html, body { margin: 0; padding: 0; height: 100%; }
+    body {
+      font-family: "Patrick Hand", system-ui, sans-serif;
+      color: var(--wf-ink);
+      background: #f0eee9;
+    }
+    /* DesignCanvas section headers — sketchy */
+    .dc-section-head h2, .dc-section-head .dc-editable {
+      font-family: "Patrick Hand", system-ui, sans-serif !important;
+      font-weight: 400 !important;
+    }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+
+  <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+
+  <script type="text/babel" src="design-canvas.jsx"></script>
+  <script type="text/babel" src="android-frame.jsx"></script>
+
+  <script type="text/babel" src="wf-primitives.jsx"></script>
+  <script type="text/babel" src="wf-auth.jsx"></script>
+  <script type="text/babel" src="wf-discovery.jsx"></script>
+  <script type="text/babel" src="wf-detail.jsx"></script>
+  <script type="text/babel" src="wf-booking.jsx"></script>
+  <script type="text/babel" src="wf-trips-msg-reviews.jsx"></script>
+  <script type="text/babel" src="wf-profile-host.jsx"></script>
+  <script type="text/babel" src="wf-add-listing.jsx"></script>
+  <script type="text/babel" src="wf-map-list.jsx"></script>
+  <script type="text/babel" src="wf-missing.jsx"></script>
+  <script type="text/babel" src="wf-promoted.jsx"></script>
+
+  <script type="text/babel">
+    // Phone artboard size constants (AndroidDevice outer dimensions)
+    const PHONE_W = 340;
+    const PHONE_H = 760;
+
+    // Intro / system card (no phone frame)
+    const IntroCard = () => (
+      <div style={{
+        width: 720, padding: '32px 36px',
+        background: '#fbfaf6',
+        border: '2px solid #1a1a1a',
+        borderRadius: 12,
+        fontFamily: 'Patrick Hand, system-ui, sans-serif',
+        color: '#1a1a1a',
+        boxSizing: 'border-box',
+      }}>
+        <div className="wf-script" style={{ fontSize: 44, lineHeight: 1, marginBottom: 4 }}>les meubles</div>
+        <div className="wf-mono" style={{ fontSize: 13, color: '#4a4a4a', marginBottom: 18 }}>
+          Wireframes lo-fi · location de logements, autos & services au Cameroun · FR + EN
+        </div>
+
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 20, marginBottom: 20 }}>
+          <div>
+            <div className="wf-mono" style={{ fontSize: 10, color: '#8a8a8a', marginBottom: 4 }}>SYSTÈME</div>
+            <ul style={{ margin: 0, paddingLeft: 18, fontSize: 16, lineHeight: 1.5 }}>
+              <li>Phone : Android · 340 × 760</li>
+              <li>Type : Patrick Hand + Caveat + Cutive Mono</li>
+              <li>Accent : #D64545 (≤ 10 % de la surface)</li>
+              <li>Bilingue FR · EN partout</li>
+              <li>Devise : FCFA (XAF)</li>
+            </ul>
+          </div>
+          <div>
+            <div className="wf-mono" style={{ fontSize: 10, color: '#8a8a8a', marginBottom: 4 }}>LÉGENDE</div>
+            <ul style={{ margin: 0, paddingLeft: 18, fontSize: 16, lineHeight: 1.5 }}>
+              <li><span style={{ display:'inline-block', width:12, height:12, background:'#D64545', borderRadius:3, verticalAlign:'middle', marginRight:6 }} /> CTA / élément sélectionné</li>
+              <li>▦ photo / image — placeholder hachuré</li>
+              <li>~~~ texte de remplissage</li>
+              <li className="wf-mono" style={{ fontFamily: 'Cutive Mono, monospace', fontSize: 13 }}>Cutive Mono = méta-info / EN</li>
+            </ul>
+          </div>
+        </div>
+
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 16, padding: 16, background: '#efece4', borderRadius: 8, fontSize: 14 }}>
+          <div>
+            <strong>1.</strong> Démarrage<br/>
+            <strong>2.</strong> Découverte<br/>
+            <strong>3.</strong> Détail annonce<br/>
+          </div>
+          <div>
+            <strong>4.</strong> Réservation + paiement<br/>
+            <strong>5.</strong> Trips + Inbox + Avis<br/>
+            <strong>6.</strong> Favoris<br/>
+          </div>
+          <div>
+            <strong>7.</strong> Profil + bascule<br/>
+            <strong>8.</strong> Mode hôte<br/>
+            <strong>9.</strong> Ajout annonce · Voir+<br/>
+            <strong>11.</strong> Back-office hôte<br/>
+            <strong>12.</strong> Avis · 13. Modération<br/>
+          </div>
+        </div>
+
+        <div style={{ marginTop: 18, padding: 14, border: '1.5px dashed #8a8a8a', borderRadius: 8, fontSize: 14, lineHeight: 1.5 }}>
+          <strong>Note copyright.</strong> Les écrans capturés dans le cahier des charges (Airbnb)
+          ne peuvent pas être reproduits à l'identique. Ces wireframes traitent les <em>mêmes
+          besoins fonctionnels</em> (recherche, onglets, carrousels, détail, réservation, mode
+          hôte…) avec une structure et un langage visuel <em>propres à les meubles</em> — à
+          affiner ensuite vers hi-fi.
+        </div>
+
+        <div style={{ marginTop: 14 }} className="wf-note">
+          ↓ Sections ci-dessous. Cliquez sur ⛶ d'un artboard pour le voir plein écran. Faites
+          glisser pour réorganiser ; le menu ⋮ permet de supprimer ce qui ne vous parle pas.
+        </div>
+      </div>
+    );
+
+    // Section helper that fixes phone size
+    const Phones = ({ children }) => (
+      <>{children}</>
+    );
+
+    function App() {
+      return (
+        <DesignCanvas>
+          {/* ── 0 · Système ──────────────────────────────────────── */}
+          <DCSection id="systeme" title="0 · Système" subtitle="Aperçu, légende, sommaire">
+            <DCArtboard id="intro" label="Lisez-moi · Read me" width={720} height={560}>
+              <IntroCard />
+            </DCArtboard>
+          </DCSection>
+
+          {/* ── 1 · Démarrage ────────────────────────────────────── */}
+          <DCSection id="demarrage" title="1 · Démarrage" subtitle="Splash + connexion · 3 variantes chacun">
+            <DCArtboard id="splash-a" label="Splash A · centré minimal" width={PHONE_W} height={PHONE_H}>
+              <Phone><SplashA /></Phone>
+            </DCArtboard>
+            <DCArtboard id="splash-b" label="Splash B · grand accent" width={PHONE_W} height={PHONE_H}>
+              <Phone><SplashB /></Phone>
+            </DCArtboard>
+            <DCArtboard id="splash-c" label="Splash C · logo + CTA" width={PHONE_W} height={PHONE_H}>
+              <Phone><SplashC /></Phone>
+            </DCArtboard>
+            <DCArtboard id="login-a" label="Login A · classique + sociaux" width={PHONE_W} height={PHONE_H}>
+              <Phone><LoginA /></Phone>
+            </DCArtboard>
+            <DCArtboard id="login-b" label="Login B · header chaleureux" width={PHONE_W} height={PHONE_H}>
+              <Phone><LoginB /></Phone>
+            </DCArtboard>
+            <DCArtboard id="login-c" label="Login C · n° d'abord" width={PHONE_W} height={PHONE_H}>
+              <Phone><LoginC /></Phone>
+            </DCArtboard>
+          </DCSection>
+
+          {/* ── 2 · Découverte ───────────────────────────────────── */}
+          <DCSection id="decouverte" title="2 · Découverte" subtitle="4 stratégies pour les 3 onglets (Logements / Auto / Services)">
+            <DCArtboard id="disc-a" label="A · Pilules horizontales (classique)" width={PHONE_W} height={PHONE_H}>
+              <Phone><DiscoveryA /></Phone>
+            </DCArtboard>
+            <DCArtboard id="disc-b" label="B · Toggle segmenté large" width={PHONE_W} height={PHONE_H}>
+              <Phone><DiscoveryB /></Phone>
+            </DCArtboard>
+            <DCArtboard id="disc-c" label="C · 3 univers en home (drilldown)" width={PHONE_W} height={PHONE_H}>
+              <Phone><DiscoveryC /></Phone>
+            </DCArtboard>
+            <DCArtboard id="disc-d" label="D · Onglets + sous-onglets" width={PHONE_W} height={PHONE_H}>
+              <Phone><DiscoveryD /></Phone>
+            </DCArtboard>
+          </DCSection>
+
+          {/* ── 3 · Détail annonce ───────────────────────────────── */}
+          <DCSection id="detail" title="3 · Détail annonce" subtitle="Même template, blocs spécifiques par type">
+            <DCArtboard id="det-log" label="Logement · équipements, calendrier" width={PHONE_W} height={PHONE_H}>
+              <Phone><DetailLogement /></Phone>
+            </DCArtboard>
+            <DCArtboard id="det-auto" label="Auto · specs, photos int/ext, conditions" width={PHONE_W} height={PHONE_H}>
+              <Phone><DetailAuto /></Phone>
+            </DCArtboard>
+            <DCArtboard id="det-srv" label="Service · menu de prix, années d'exp." width={PHONE_W} height={PHONE_H}>
+              <Phone><DetailService /></Phone>
+            </DCArtboard>
+          </DCSection>
+
+          {/* ── 4 · Réservation + paiement ───────────────────────── */}
+          <DCSection id="reservation" title="4 · Réservation & paiement" subtitle="One-page vs multi-step + confirmation">
+            <DCArtboard id="book-a" label="A · One-page récap + paiement" width={PHONE_W} height={PHONE_H}>
+              <Phone><BookingA /></Phone>
+            </DCArtboard>
+            <DCArtboard id="book-b" label="B · Multi-step (focus paiement)" width={PHONE_W} height={PHONE_H}>
+              <Phone><BookingB /></Phone>
+            </DCArtboard>
+            <DCArtboard id="book-c" label="Confirmation + Agenda + Contact" width={PHONE_W} height={PHONE_H}>
+              <Phone><ConfirmationC /></Phone>
+            </DCArtboard>
+          </DCSection>
+
+          {/* ── 5 · Trips, Inbox, Avis ──────────────────────────── */}
+          <DCSection id="trips-msg" title="5 · Trips, Inbox, Avis" subtitle="Mes réservations, messagerie, page d'avis">
+            <DCArtboard id="trips" label="Trips · À venir / Passés / Annulés" width={PHONE_W} height={PHONE_H}>
+              <Phone><TripsA /></Phone>
+            </DCArtboard>
+            <DCArtboard id="inbox" label="Inbox · filtres par type d'annonce" width={PHONE_W} height={PHONE_H}>
+              <Phone><MessagerieA /></Phone>
+            </DCArtboard>
+            <DCArtboard id="chat" label="Chat thread · hôte ↔ locataire" width={PHONE_W} height={PHONE_H}>
+              <Phone><ChatThread /></Phone>
+            </DCArtboard>
+            <DCArtboard id="reviews" label="Tous les avis · stats + cloud + liste" width={PHONE_W} height={PHONE_H}>
+              <Phone><ReviewsAll /></Phone>
+            </DCArtboard>
+          </DCSection>
+
+          {/* ── 6 · Favoris ─────────────────────────────────────── */}
+          <DCSection id="favoris" title="6 · Favoris · Wishlists" subtitle="Collections d'annonces sauvegardées">
+            <DCArtboard id="fav" label="Wishlists · grille de collages" width={PHONE_W} height={PHONE_H}>
+              <Phone><FavoritesA /></Phone>
+            </DCArtboard>
+          </DCSection>
+
+          {/* ── 7 · Profil + bascule ────────────────────────────── */}
+          <DCSection id="profil" title="7 · Profil & bascule" subtitle="Mode locataire (Guest) — bouton vers mode hôte">
+            <DCArtboard id="profile" label="Profil Guest + CTA 'Devenez hôte'" width={PHONE_W} height={PHONE_H}>
+              <Phone><ProfileGuest /></Phone>
+            </DCArtboard>
+            <DCArtboard id="drawer" label="Drawer hôte (hamburger)" width={PHONE_W} height={PHONE_H}>
+              <Phone><HostDrawer /></Phone>
+            </DCArtboard>
+          </DCSection>
+
+          {/* ── 8 · Mode hôte ───────────────────────────────────── */}
+          <DCSection id="hote" title="8 · Mode hôte" subtitle="Today · Calendar · Listings (tab bar 4 + hamburger)">
+            <DCArtboard id="host-today" label="Today · check-ins + stats" width={PHONE_W} height={PHONE_H}>
+              <Phone><HostToday /></Phone>
+            </DCArtboard>
+            <DCArtboard id="host-cal" label="Calendar · mois + légende" width={PHONE_W} height={PHONE_H}>
+              <Phone><HostCalendar /></Phone>
+            </DCArtboard>
+            <DCArtboard id="host-list" label="Listings · CRUD + Promouvoir" width={PHONE_W} height={PHONE_H}>
+              <Phone><HostListings /></Phone>
+            </DCArtboard>
+          </DCSection>
+
+          {/* ── 9 · Ajout annonce ───────────────────────────────── */}
+          <DCSection id="ajout" title="9 · Ajout d'annonce (multi-étapes)" subtitle="Choix type → catégorie service → formulaire → menu prix → forfait">
+            <DCArtboard id="add-0" label="Étape 1 · Type principal" width={PHONE_W} height={PHONE_H}>
+              <Phone><AddStep0 /></Phone>
+            </DCArtboard>
+            <DCArtboard id="add-srv" label="Étape 2 · Catégorie service" width={PHONE_W} height={PHONE_H}>
+              <Phone><AddStepService /></Phone>
+            </DCArtboard>
+            <DCArtboard id="add-form" label="Étape 4 · Photos + titre + prix" width={PHONE_W} height={PHONE_H}>
+              <Phone><AddStepForm /></Phone>
+            </DCArtboard>
+            <DCArtboard id="add-menu" label="Étape 5 · Menu de prix (service)" width={PHONE_W} height={PHONE_H}>
+              <Phone><AddStepServiceMenu /></Phone>
+            </DCArtboard>
+            <DCArtboard id="add-pack" label="Étape 6 · Forfait + paiement" width={PHONE_W} height={PHONE_H}>
+              <Phone><AddStepPackage /></Phone>
+            </DCArtboard>
+          </DCSection>
+
+          {/* ── 10 · Voir plus (carte + liste) ──────────────────── */}
+          <DCSection id="voirplus" title="10 · Voir plus · carte + liste" subtitle="3 états : carte étendue → carte réduite → liste seule">
+            <DCArtboard id="map-1" label="État 1 · carte étendue" width={PHONE_W} height={PHONE_H}>
+              <Phone><MapListExpanded /></Phone>
+            </DCArtboard>
+            <DCArtboard id="map-2" label="État 2 · carte réduite (scroll)" width={PHONE_W} height={PHONE_H}>
+              <Phone><MapListShrunk /></Phone>
+            </DCArtboard>
+            <DCArtboard id="map-3" label="État 3 · liste seule + bouton flottant" width={PHONE_W} height={PHONE_H}>
+              <Phone><MapListScrolled /></Phone>
+            </DCArtboard>
+          </DCSection>
+
+          {/* ── 11 · Back-office hôte ──────────────────────────── */}
+          <DCSection id="backoffice" title="11 · Back-office hôte" subtitle="Récap forfait, stats détaillées, versements, promo">
+            <DCArtboard id="bo-forfait" label="Forfait actuel · récap + factures" width={PHONE_W} height={PHONE_H}>
+              <Phone><HostPackageRecap /></Phone>
+            </DCArtboard>
+            <DCArtboard id="bo-stats" label="Stats détaillées · KPI + sparkline" width={PHONE_W} height={PHONE_H}>
+              <Phone><HostStatsDetail /></Phone>
+            </DCArtboard>
+            <DCArtboard id="bo-payouts" label="Versements · MoMo / Orange" width={PHONE_W} height={PHONE_H}>
+              <Phone><HostPayouts /></Phone>
+            </DCArtboard>
+            <DCArtboard id="bo-promote" label="Promouvoir une annonce" width={PHONE_W} height={PHONE_H}>
+              <Phone><PromoteListing /></Phone>
+            </DCArtboard>
+          </DCSection>
+
+          {/* ── 12 · Dépôt d'avis ──────────────────────────────── */}
+          <DCSection id="avis" title="12 · Dépôt d'avis" subtitle="Locataire ↔ hôte · deux formulaires distincts">
+            <DCArtboard id="rev-guest" label="Locataire note l'hôte · stars + détails" width={PHONE_W} height={PHONE_H}>
+              <Phone><ReviewLeaveGuest /></Phone>
+            </DCArtboard>
+            <DCArtboard id="rev-host" label="Hôte note le locataire · pouce + tags" width={PHONE_W} height={PHONE_H}>
+              <Phone><ReviewLeaveHost /></Phone>
+            </DCArtboard>
+          </DCSection>
+
+          {/* ── 13 · Modération & sécurité ─────────────────────── */}
+          <DCSection id="moderation" title="13 · Modération & sécurité" subtitle="Signalement, vérification ID, notifications">
+            <DCArtboard id="mod-report" label="Signaler une annonce · motifs + preuves" width={PHONE_W} height={PHONE_H}>
+              <Phone><ReportFlow /></Phone>
+            </DCArtboard>
+            <DCArtboard id="mod-kyc" label="Vérification ID · CNI / passeport" width={PHONE_W} height={PHONE_H}>
+              <Phone><VerifyID /></Phone>
+            </DCArtboard>
+            <DCArtboard id="mod-notif" label="Notifications · filtres + badges" width={PHONE_W} height={PHONE_H}>
+              <Phone><NotificationsInbox /></Phone>
+            </DCArtboard>
+          </DCSection>
+
+          {/* ── 14 · Annonces promues ─────────────────────────── */}
+          <DCSection id="promues" title="14 · Annonces promues" subtitle="5 traitements visuels + 3 contextes (liste / home / carte)">
+            <DCArtboard id="promo-compare" label="Comparatif · 5 cartes côte-à-côte" width={900} height={500}>
+              <PromotedCardCompare />
+            </DCArtboard>
+            <DCArtboard id="promo-list" label="En contexte · liste de résultats" width={PHONE_W} height={PHONE_H}>
+              <Phone><DiscoveryWithPromoted /></Phone>
+            </DCArtboard>
+            <DCArtboard id="promo-home" label="En contexte · home + carrousel 'À la une'" width={PHONE_W} height={PHONE_H}>
+              <Phone><HomeFeaturedCarousel /></Phone>
+            </DCArtboard>
+            <DCArtboard id="promo-map" label="En contexte · carte (pin distinct)" width={PHONE_W} height={PHONE_H}>
+              <Phone><MapWithPromoted /></Phone>
+            </DCArtboard>
+          </DCSection>
+        </DesignCanvas>
+      );
+    }
+
+    ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+  </script>
+</body>
+</html>

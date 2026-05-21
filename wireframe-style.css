@@ -1,0 +1,304 @@
+/* ─────────────────────────────────────────────────────────────
+   les meubles — wireframe primitives stylesheet
+   Lo-fi sketchy aesthetic: handwritten fonts, hand-drawn boxes.
+   ───────────────────────────────────────────────────────────── */
+
+:root {
+  --wf-ink: #1a1a1a;
+  --wf-ink-soft: #4a4a4a;
+  --wf-ink-faint: #8a8a8a;
+  --wf-paper: #fbfaf6;
+  --wf-paper-shade: #efece4;
+  --wf-paper-darker: #e3dfd2;
+  --wf-accent: #D64545;
+  --wf-accent-soft: #f4d6d6;
+  --wf-line: 2px;
+  --wf-radius: 6px;
+  --wf-font-hand: "Patrick Hand", "Comic Sans MS", "Marker Felt", sans-serif;
+  --wf-font-script: "Caveat", "Patrick Hand", cursive;
+  --wf-font-mono: "Cutive Mono", "Courier New", monospace;
+}
+
+/* sketchy box base */
+.wf-box {
+  border: var(--wf-line) solid var(--wf-ink);
+  border-radius: var(--wf-radius);
+  background: var(--wf-paper);
+  box-sizing: border-box;
+}
+.wf-box--dashed { border-style: dashed; }
+.wf-box--soft { border-color: var(--wf-ink-soft); }
+.wf-box--faint { border-color: var(--wf-ink-faint); }
+.wf-box--ink { background: var(--wf-ink); color: var(--wf-paper); }
+.wf-box--accent { background: var(--wf-accent); color: #fff; border-color: var(--wf-accent); }
+.wf-box--shade { background: var(--wf-paper-shade); }
+
+/* image placeholder — diagonal stripes */
+.wf-img {
+  position: relative;
+  border: var(--wf-line) solid var(--wf-ink);
+  border-radius: var(--wf-radius);
+  background:
+    repeating-linear-gradient(
+      45deg,
+      transparent 0,
+      transparent 7px,
+      rgba(26,26,26,0.12) 7px,
+      rgba(26,26,26,0.12) 8px
+    ),
+    var(--wf-paper-shade);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--wf-font-mono);
+  font-size: 11px;
+  color: var(--wf-ink-soft);
+  text-align: center;
+  padding: 4px;
+  overflow: hidden;
+  box-sizing: border-box;
+}
+.wf-img__label {
+  background: var(--wf-paper);
+  padding: 2px 6px;
+  border-radius: 3px;
+  line-height: 1.1;
+  max-width: 90%;
+}
+
+/* map placeholder */
+.wf-map {
+  position: relative;
+  border: var(--wf-line) solid var(--wf-ink);
+  border-radius: var(--wf-radius);
+  background:
+    radial-gradient(circle at 22% 30%, rgba(214,69,69,0.18) 0 6px, transparent 7px),
+    radial-gradient(circle at 60% 55%, rgba(214,69,69,0.18) 0 6px, transparent 7px),
+    radial-gradient(circle at 80% 22%, rgba(214,69,69,0.18) 0 6px, transparent 7px),
+    radial-gradient(circle at 38% 78%, rgba(214,69,69,0.18) 0 6px, transparent 7px),
+    linear-gradient(180deg, #eee8d8, #e6e0cc);
+  font-family: var(--wf-font-mono);
+  font-size: 11px;
+  color: var(--wf-ink-soft);
+  overflow: hidden;
+  box-sizing: border-box;
+}
+.wf-map::before {
+  content: '';
+  position: absolute; inset: 0;
+  background:
+    linear-gradient(90deg, transparent 30%, rgba(180,170,140,0.4) 30% 31%, transparent 31%),
+    linear-gradient(0deg, transparent 60%, rgba(180,170,140,0.4) 60% 61%, transparent 61%),
+    linear-gradient(45deg, transparent 50%, rgba(180,170,140,0.3) 50% 50.5%, transparent 50.5%);
+  pointer-events: none;
+}
+.wf-map__pin {
+  position: absolute;
+  width: 22px; height: 22px;
+  border-radius: 50% 50% 50% 0;
+  background: var(--wf-accent);
+  border: 1.5px solid var(--wf-ink);
+  transform: rotate(-45deg);
+}
+.wf-map__pin::after {
+  content: '';
+  position: absolute;
+  inset: 5px;
+  background: #fff;
+  border-radius: 50%;
+}
+
+/* typography */
+.wf-h { font-family: var(--wf-font-hand); font-weight: 400; color: var(--wf-ink); line-height: 1.15; }
+.wf-script { font-family: var(--wf-font-script); }
+.wf-mono { font-family: var(--wf-font-mono); }
+.wf-muted { color: var(--wf-ink-soft); }
+.wf-faint { color: var(--wf-ink-faint); }
+.wf-bilingual { font-family: var(--wf-font-mono); font-size: 10px; color: var(--wf-ink-faint); letter-spacing: 0.02em; }
+
+/* scribble line — used for "text content" placeholders */
+.wf-scribble {
+  display: block;
+  height: 2px;
+  background: var(--wf-ink);
+  border-radius: 1px;
+  margin: 6px 0;
+  opacity: 0.65;
+}
+.wf-scribble--80 { width: 80%; }
+.wf-scribble--60 { width: 60%; }
+.wf-scribble--40 { width: 40%; }
+.wf-scribble--20 { width: 20%; }
+.wf-scribble--soft { opacity: 0.35; }
+
+/* circle avatar/icon placeholder */
+.wf-circle {
+  border: var(--wf-line) solid var(--wf-ink);
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--wf-paper);
+  font-family: var(--wf-font-hand);
+  color: var(--wf-ink);
+  flex-shrink: 0;
+}
+
+/* btn */
+.wf-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  font-family: var(--wf-font-hand);
+  font-size: 14px;
+  padding: 8px 14px;
+  border: var(--wf-line) solid var(--wf-ink);
+  border-radius: 999px;
+  background: var(--wf-paper);
+  color: var(--wf-ink);
+  cursor: pointer;
+  box-sizing: border-box;
+  line-height: 1;
+}
+.wf-btn--solid { background: var(--wf-ink); color: var(--wf-paper); }
+.wf-btn--accent { background: var(--wf-accent); color: #fff; border-color: var(--wf-accent); }
+.wf-btn--block { width: 100%; padding: 12px 14px; font-size: 15px; }
+.wf-btn--ghost { background: transparent; }
+
+/* tab — pill */
+.wf-tab {
+  font-family: var(--wf-font-hand);
+  font-size: 13px;
+  padding: 6px 12px;
+  border-radius: 999px;
+  border: 1.5px solid var(--wf-ink);
+  background: var(--wf-paper);
+  white-space: nowrap;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+.wf-tab--active { background: var(--wf-ink); color: var(--wf-paper); }
+
+/* chip */
+.wf-chip {
+  font-family: var(--wf-font-mono);
+  font-size: 10px;
+  padding: 2px 7px;
+  border-radius: 999px;
+  border: 1px solid var(--wf-ink);
+  background: var(--wf-paper);
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  line-height: 1.4;
+}
+.wf-chip--accent { background: var(--wf-accent); color: #fff; border-color: var(--wf-accent); }
+.wf-chip--ink { background: var(--wf-ink); color: var(--wf-paper); }
+
+/* divider — dashed line */
+.wf-hr {
+  border: 0;
+  border-top: 1.5px dashed var(--wf-ink-faint);
+  margin: 10px 0;
+}
+
+/* sticky bottom action bar inside frame */
+.wf-bottombar {
+  position: absolute;
+  left: 0; right: 0; bottom: 0;
+  padding: 10px 14px 14px;
+  background: var(--wf-paper);
+  border-top: 1.5px solid var(--wf-ink);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* tab bar */
+.wf-tabbar {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  padding: 8px 4px;
+  border-top: 1.5px solid var(--wf-ink);
+  background: var(--wf-paper);
+}
+.wf-tabbar__item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  font-family: var(--wf-font-hand);
+  font-size: 10px;
+  color: var(--wf-ink-soft);
+}
+.wf-tabbar__item--active { color: var(--wf-accent); font-weight: 600; }
+.wf-tabbar__icon {
+  width: 22px; height: 22px;
+  border: 1.5px solid currentColor;
+  border-radius: 4px;
+}
+
+/* sticky note callout */
+.wf-note {
+  background: #fef4a8;
+  color: #5a4a2a;
+  font-family: var(--wf-font-script);
+  font-size: 14px;
+  padding: 8px 10px;
+  border-radius: 4px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.12);
+  line-height: 1.2;
+  transform: rotate(-1deg);
+}
+
+/* slightly rotate boxes for hand-drawn feel — applied selectively */
+.wf-tilt-left { transform: rotate(-0.4deg); }
+.wf-tilt-right { transform: rotate(0.4deg); }
+
+/* page header (inside frame) */
+.wf-pagehead {
+  padding: 12px 14px 8px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.wf-pagehead__title {
+  font-family: var(--wf-font-hand);
+  font-size: 20px;
+  font-weight: 400;
+  margin: 0;
+  flex: 1;
+  line-height: 1.1;
+}
+
+/* search bar — pill */
+.wf-searchbar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--wf-paper);
+  border: 1.5px solid var(--wf-ink);
+  border-radius: 999px;
+  padding: 8px 14px;
+  font-family: var(--wf-font-hand);
+  font-size: 13px;
+  box-shadow: 0 1px 0 rgba(0,0,0,0.04);
+}
+
+/* x-axis scroll cue chevron */
+.wf-chevron {
+  display: inline-block;
+  width: 6px; height: 6px;
+  border-top: 1.5px solid currentColor;
+  border-right: 1.5px solid currentColor;
+  transform: rotate(45deg);
+}
+
+/* override Android device's mint-tinted surface with wireframe paper */
+.wf-frame .lm-content-bg { background: var(--wf-paper); }
+
+/* design canvas section title override - smaller for breathing room */
+.dc-section-title { font-family: var(--wf-font-hand) !important; }
