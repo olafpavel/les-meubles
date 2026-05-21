@@ -1,0 +1,120 @@
+name: EAS Preview Build (Android APK)
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'app-mobile/**'
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: Build Android APK
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Vérifier EXPO_TOKEN
+        env:
+          TOKEN: ${{ secrets.EXPO_TOKEN }}
+        run: |
+          if [ -z "$TOKEN" ]; then
+            echo "EXPO_TOKEN_MISSING=true" >> $GITHUB_ENV
+            echo "::error::EXPO_TOKEN manquant"
+            exit 1
+          fi
+          echo "EXPO_TOKEN présent ✓"
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: app-mobile/package-lock.json
+
+      - name: Installer les dépendances
+        working-directory: app-mobile
+        run: npm ci --legacy-peer-deps
+
+      - name: Setup EAS CLI
+        uses: expo/expo-github-action@v8
+        with:
+          eas-version: latest
+          token: ${{ secrets.EXPO_TOKEN }}
+
+      - name: Vérifier l'authentification Expo
+        id: whoami
+        run: |
+          OUTPUT=$(eas whoami 2>&1) || true
+          echo "whoami_output=$OUTPUT" >> $GITHUB_OUTPUT
+          echo "Résultat eas whoami : $OUTPUT"
+          if echo "$OUTPUT" | grep -qi "error\|not logged\|unauthorized\|invalid"; then
+            echo "::error::Authentification EAS échouée : $OUTPUT"
+            exit 1
+          fi
+        env:
+          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+
+      - name: Initialiser le projet EAS
+        id: init
+        working-directory: app-mobile
+        env:
+          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+        run: |
+          OUTPUT=$(eas init --non-interactive --force 2>&1) || true
+          echo "$OUTPUT"
+          echo "init_output=$OUTPUT" >> $GITHUB_OUTPUT
+
+      - name: Lancer le build APK
+        id: build
+        working-directory: app-mobile
+        env:
+          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+        run: |
+          OUTPUT=$(eas build \
+            --platform android \
+            --profile preview \
+            --non-interactive \
+            --no-wait 2>&1)
+          echo "$OUTPUT"
+          BUILD_URL=$(echo "$OUTPUT" | grep -oP 'https://expo\.dev/[^\s]+' | head -1 || echo "")
+          echo "build_url=$BUILD_URL" >> $GITHUB_OUTPUT
+          echo "build_output<<EOF" >> $GITHUB_OUTPUT
+          echo "$OUTPUT" | head -20 >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+
+      - name: Rapport sur la PR
+        if: always()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const steps = {
+              whoami: `${{ steps.whoami.outputs.whoami_output }}`,
+              init:   `${{ steps.init.outputs.init_output }}`,
+              build:  `${{ steps.build.outputs.build_output }}`,
+              url:    `${{ steps.build.outputs.build_url }}`,
+            };
+
+            const prs = await github.rest.pulls.list({
+              owner: context.repo.owner, repo: context.repo.repo, state: 'open',
+            });
+            const pr = prs.data[0];
+            if (!pr) return;
+
+            let body;
+            if (steps.url) {
+              body = `## Build Android lancé ✓\n\n**[Télécharge l'APK ici](${steps.url})**\n\nInstalle-le sur ton Android (active "Sources inconnues" si demandé).`;
+            } else {
+              body = `## Diagnostic build Android\n\n` +
+                (steps.whoami ? `**eas whoami :** \`${steps.whoami}\`\n\n` : '') +
+                (steps.init   ? `**eas init :** \`\`\`\n${steps.init.slice(0,300)}\n\`\`\`\n\n` : '') +
+                (steps.build  ? `**eas build :** \`\`\`\n${steps.build.slice(0,300)}\n\`\`\`\n\n` : '') +
+                `\n[Voir les logs complets](${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId})`;
+            }
+
+            await github.rest.issues.createComment({
+              owner: context.repo.owner, repo: context.repo.repo,
+              issue_number: pr.number, body,
+            });

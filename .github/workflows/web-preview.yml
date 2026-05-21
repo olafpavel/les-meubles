@@ -1,0 +1,84 @@
+name: Web Preview (GitHub Pages)
+
+on:
+  push:
+    branches: [main, 'claude/**']
+    paths:
+      - 'app-mobile/**'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+  pull-requests: write
+  issues: write
+
+jobs:
+  deploy:
+    name: Build & Deploy web preview
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: app-mobile/package-lock.json
+
+      - name: Installer les dépendances
+        working-directory: app-mobile
+        run: npm ci --legacy-peer-deps
+
+      - name: Build web
+        working-directory: app-mobile
+        run: npx expo export --platform web
+        env:
+          EXPO_PUBLIC_SUPABASE_URL: ${{ secrets.EXPO_PUBLIC_SUPABASE_URL }}
+          EXPO_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.EXPO_PUBLIC_SUPABASE_ANON_KEY }}
+
+      - name: Injecter meta anti-cache dans index.html
+        working-directory: app-mobile
+        run: |
+          python3 - <<'PY'
+          with open("dist/index.html", "r") as f:
+              html = f.read()
+          meta = (
+              '<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />\n'
+              '    <meta http-equiv="Pragma" content="no-cache" />\n'
+              '    <meta http-equiv="Expires" content="0" />\n'
+              '    <style>html,body,#root{min-height:100vh;min-height:100dvh;}</style>'
+          )
+          html = html.replace("<title>Les Meubles</title>", "<title>Les Meubles</title>\n    " + meta)
+          with open("dist/index.html", "w") as f:
+              f.write(html)
+          PY
+
+      - name: Déployer sur GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: app-mobile/dist
+
+      - name: Commenter la PR avec le lien de preview
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const url = `https://olafpavel.github.io/les-meubles`;
+            const prs = await github.rest.pulls.list({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              state: 'open',
+            });
+            const pr = prs.data[0];
+            if (!pr) return;
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: pr.number,
+              body: `## Aperçu web disponible\n\nOuvre ce lien sur ton téléphone Android (dans Chrome) :\n\n**${url}**\n\nL'app tourne dans le navigateur — Discovery, détail annonce, réservation, profil.`,
+            });
