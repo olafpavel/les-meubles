@@ -41,44 +41,19 @@ jobs:
           EXPO_PUBLIC_SUPABASE_URL: ${{ secrets.EXPO_PUBLIC_SUPABASE_URL }}
           EXPO_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.EXPO_PUBLIC_SUPABASE_ANON_KEY }}
 
-      - name: Injecter error handler dans index.html
+      - name: Injecter meta anti-cache dans index.html
         working-directory: app-mobile
         run: |
           python3 - <<'PY'
-          import re
           with open("dist/index.html", "r") as f:
               html = f.read()
-          handler = """<style>
-          html,body,#root{min-height:100vh!important;min-height:-webkit-fill-available!important;}
-          </style>
-          <script>
-          window.__errors=[];
-          window.onerror=function(m,s,l,c,e){
-            window.__errors.push(m+(e?'\\n'+e.stack:''));
-            var d=document.getElementById('root');
-            if(d){d.style.cssText='padding:20px;font-family:monospace;font-size:13px;color:#c00;background:#fff;min-height:100vh;';
-            d.innerHTML='<b>Erreur JS:</b><pre style="white-space:pre-wrap">'+window.__errors.join('\\n\\n')+'</pre>';}
-          };
-          window.addEventListener('unhandledrejection',function(e){
-            window.onerror('Unhandled: '+e.reason,null,null,null,e.reason);
-          });
-          document.addEventListener('DOMContentLoaded',function(){
-            setTimeout(function(){
-              var r=document.getElementById('root');
-              if(!r)return;
-              if(!r.firstChild){
-                r.style.cssText='padding:20px;color:#c00;font-family:sans-serif;background:#fff;min-height:100vh;';
-                r.textContent='React pas monté — voir console navigateur';
-                return;
-              }
-              if(r.scrollHeight<10){
-                r.style.minHeight='100vh';
-                r.firstChild.style.minHeight='100vh';
-              }
-            },4000);
-          });
-          </script>"""
-          html = html.replace("<div id=\"root\"></div>", handler + "\n  <div id=\"root\"></div>")
+          meta = (
+              '<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />\n'
+              '    <meta http-equiv="Pragma" content="no-cache" />\n'
+              '    <meta http-equiv="Expires" content="0" />\n'
+              '    <style>html,body,#root{min-height:100vh;min-height:100dvh;}</style>'
+          )
+          html = html.replace("<title>Les Meubles</title>", "<title>Les Meubles</title>\n    " + meta)
           with open("dist/index.html", "w") as f:
               f.write(html)
           PY
