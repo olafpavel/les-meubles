@@ -6,7 +6,6 @@ import { View, Text } from 'react-native';
 import { queryClient } from '@/lib/queryClient';
 import { supabase } from '@/lib/supabase';
 import { useAuthStore } from '@/stores/authStore';
-import '../global.css';
 
 class ErrorBoundary extends Component<{ children: React.ReactNode }, { error: string | null }> {
   constructor(props: any) {
