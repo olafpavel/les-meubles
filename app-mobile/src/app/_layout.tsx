@@ -28,13 +28,15 @@ export default function RootLayout() {
 
   useEffect(() => {
     // Get initial session
-    void supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
-      setLoading(false);
-      if (session?.user) {
-        void fetchProfile(session.user.id);
-      }
-    });
+    supabase.auth.getSession()
+      .then(({ data: { session } }) => {
+        setSession(session);
+        if (session?.user) void fetchProfile(session.user.id);
+      })
+      .catch(() => {
+        // Supabase non configuré ou erreur réseau — mode démo
+      })
+      .finally(() => setLoading(false));
 
     // Listen for auth changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
