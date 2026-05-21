@@ -2,6 +2,7 @@
   "expo": {
     "name": "Les Meubles",
     "slug": "les-meubles",
+    "owner": "olafpavel",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",

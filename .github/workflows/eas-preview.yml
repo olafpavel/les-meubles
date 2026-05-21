@@ -21,12 +21,10 @@ jobs:
           TOKEN: ${{ secrets.EXPO_TOKEN }}
         run: |
           if [ -z "$TOKEN" ]; then
-            echo "::error::EXPO_TOKEN n'est pas configuré dans les secrets du repo."
-            echo "::error::Va sur https://github.com/olafpavel/les-meubles/settings/secrets/actions"
-            echo "::error::et ajoute EXPO_TOKEN avec ta clé depuis https://expo.dev/settings/access-tokens"
+            echo "::error::EXPO_TOKEN manquant — ajoute-le dans Settings > Secrets > Actions"
             exit 1
           fi
-          echo "EXPO_TOKEN trouvé ✓"
+          echo "EXPO_TOKEN présent ✓"
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -45,11 +43,18 @@ jobs:
           eas-version: latest
           token: ${{ secrets.EXPO_TOKEN }}
 
-      - name: Initialiser le projet EAS
+      - name: Vérifier l'authentification Expo
+        run: eas whoami
+        env:
+          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+
+      - name: Initialiser / lier le projet EAS
         working-directory: app-mobile
         env:
           EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
-        run: eas init --non-interactive --force
+        run: |
+          eas init --non-interactive --force || true
+          cat app.json | grep -o '"projectId":[^,}]*' || echo "(pas encore de projectId)"
 
       - name: Lancer le build APK
         id: build
@@ -67,6 +72,7 @@ jobs:
           echo "build_url=$BUILD_URL" >> $GITHUB_OUTPUT
 
       - name: Commenter la PR avec le lien du build
+        if: always()
         uses: actions/github-script@v7
         with:
           script: |
